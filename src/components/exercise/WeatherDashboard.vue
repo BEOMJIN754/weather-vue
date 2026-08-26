@@ -1,5 +1,8 @@
 <script setup>
 import { computed, ref, watch, watchEffect } from 'vue'
+import BaseDashBoardCard from './BaseDashBoardCard.vue'
+import SearchBar from './SearchBar.vue'
+import WeatherCard from './WeatherCard.vue'
 
 const weatherList = ref([
   { id: 'city_01', name: 'seoul', temp: 24, status: '맑음' },
@@ -44,14 +47,6 @@ function changeTemperatureUnit() {
   }
 }
 
-function displayTemperature(celsius) {
-  if (temperatureUnit.value === 'C') {
-    return celsius
-  }
-
-  return ((celsius * 9) / 5 + 32).toFixed(1)
-}
-
 //추가2 : 즐겨찾기 기능
 const favoriteCityNames = ref([])
 
@@ -66,49 +61,35 @@ function toggleFavorite(cityName) {
 
 <template>
   <div class="dashboard-wrapper">
-    <section class="search-box">
-      <h2>도시 검색</h2>
-      <input
-        type="text"
-        :value="searchQuery"
-        placeholder="enter the city"
-        @input="searchQuery = $event.target.value"
-      />
+    <BaseDashBoardCard class="search-box">
+      <template #title><h2>도시 검색</h2></template>
+      <SearchBar :current-query="searchQuery" @update-query="searchQuery = $event" />
       <p>
         searching city: <strong>{{ searchQuery }}</strong>
       </p>
-    </section>
+    </BaseDashBoardCard>
 
-    <section class="favorite-box">
-      <h2>⭐ Favorite Cities</h2>
+    <BaseDashBoardCard class="favorite-box">
+      <template #title><h2>⭐ Favorite Cities</h2></template>
       <p v-if="favoriteCityNames.length === 0">아직 즐겨찾기한 도시가 없습니다.</p>
       <p v-else>{{ favoriteCityNames.join(', ') }}</p>
-    </section>
+    </BaseDashBoardCard>
 
-    <section class="list-box">
-      <h2>weather by city</h2>
-      <article
+    <BaseDashBoardCard class="list-box">
+      <template #title><h2>weather by city</h2></template>
+      <WeatherCard
         v-for="item in filteredWeatherList"
         :key="item.id"
-        class="weather-card"
-        @click="selectedCityInfo = `${item.name}이 선택되었습니다.`"
-      >
-        <button @click.stop="toggleFavorite(item.name)">
-          {{ favoriteCityNames.includes(item.name) ? '★ delete Favorite' : '☆ Favorite' }}
-        </button>
-        <h3>{{ item.name }}({{ item.status }})</h3>
-        <button @click="changeTemperatureUnit">온도 단위 변경</button>
-        <p>temperature now: {{ displayTemperature(item.temp) }}°</p>
-
-        <span v-if="item.temp >= 25" class="temperature-status hot">🥵 더움</span>
-        <span v-else-if="item.temp <= 10" class="temperature-status cold">🥶 추움</span>
-        <span v-else class="temperature-status cool">🍃 시원함</span>
-
-        <button class="detail-button" @click.stop="showDetail(item.name, item.status)">
-          Details
-        </button>
-      </article>
-    </section>
+        :weather="item"
+        :temperature-unit="temperatureUnit"
+        :is-favorite="favoriteCityNames.includes(item.name)"
+        @select="selectedCityInfo = `${$event}이 선택되었습니다.`"
+        @toggle-favorite="toggleFavorite"
+        @change-temperature-unit="changeTemperatureUnit"
+        @show-detail="showDetail"
+      />
+      <p v-if="filteredWeatherList.length === 0">검색 결과가 없습니다.</p>
+    </BaseDashBoardCard>
 
     <p class="status-bar">{{ selectedCityInfo }}</p>
   </div>
