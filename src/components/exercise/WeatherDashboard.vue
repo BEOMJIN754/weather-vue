@@ -2,14 +2,14 @@
 import { computed, ref, watch, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { weatherList } from '@/data/weather'
+
 import BaseDashBoardCard from './BaseDashBoardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
 
-const router = useRouter()
-
 const searchQuery = ref('')
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보시오')
+const router = useRouter()
 
 function goDetail(cityId) {
   router.push({ name: 'WeatherDetail', params: { cityId } })

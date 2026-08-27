@@ -35,12 +35,11 @@ function displayTemperature(celsius) {
     <button type="button" @click.stop="emit('change-temperature-unit')">
       온도 단위 변경
     </button>
-    <p>
-      temperature now: {{ displayTemperature(props.weather.temp) }}°{{ props.temperatureUnit }}
-    </p>
+    <p>Temp.now: {{ displayTemperature(props.weather.temp) }}°{{ props.temperatureUnit }}</p>
+    <p>Weather: {{ props.weather.status }}</p>
 
-    <span v-if="props.weather.temp >= 25" class="temperature-status hot">🥵 더움</span>
-    <span v-else-if="props.weather.temp <= 10" class="temperature-status cold">🥶 추움</span>
+    <span v-if="props.weather.temp >= 25" class="temperature-status hot"> 🥵 더움 </span>
+    <span v-else-if="props.weather.temp <= 10" class="temperature-status cold"> 🥶 추움 </span>
     <span v-else class="temperature-status cool">🍃 시원함</span>
 
     <button
@@ -48,7 +47,7 @@ function displayTemperature(celsius) {
       class="detail-button"
       @click.stop="emit('show-detail', props.weather.id)"
     >
-      Details
+      details
     </button>
   </article>
 </template>
