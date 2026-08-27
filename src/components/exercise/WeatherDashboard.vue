@@ -1,31 +1,26 @@
 <script setup>
 import { computed, ref, watch, watchEffect } from 'vue'
+import { useRouter } from 'vue-router'
+import { weatherList } from '@/data/weather'
 import BaseDashBoardCard from './BaseDashBoardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
 
-const weatherList = ref([
-  { id: 'city_01', name: 'seoul', temp: 24, status: '맑음' },
-  { id: 'city_02', name: 'soowon', temp: 29, status: '비' },
-  { id: 'city_03', name: 'busan', temp: 30, status: '구름' },
-  { id: 'city_04', name: 'incheon', temp: 23, status: '흐림' },
-  { id: 'city_05', name: 'ulsan', temp: 33, status: '폭염' },
-  { id: 'city_06', name: 'osaka', temp: 22, status: '맑음' },
-])
+const router = useRouter()
 
 const searchQuery = ref('')
 const selectedCityInfo = ref('카드를 클릭하거나 검색해 보시오')
 
-function showDetail(cityName, status) {
-  window.alert(`${cityName}의 현재 날씨는 [${status}] 상태입니다.`)
+function goDetail(cityId) {
+  router.push({ name: 'WeatherDetail', params: { cityId } })
 }
 
 const filteredWeatherList = computed(() => {
   const query = searchQuery.value.trim()
 
-  if (!query) return weatherList.value
+  if (!query) return weatherList
 
-  return weatherList.value.filter((item) => item.name.includes(query))
+  return weatherList.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()))
 })
 
 watch(selectedCityInfo, (newInfo) => {
@@ -86,7 +81,7 @@ function toggleFavorite(cityName) {
         @select="selectedCityInfo = `${$event}이 선택되었습니다.`"
         @toggle-favorite="toggleFavorite"
         @change-temperature-unit="changeTemperatureUnit"
-        @show-detail="showDetail"
+        @show-detail="goDetail"
       />
       <p v-if="filteredWeatherList.length === 0">검색 결과가 없습니다.</p>
     </BaseDashBoardCard>

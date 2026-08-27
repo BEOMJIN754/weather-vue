@@ -46,7 +46,7 @@ function displayTemperature(celsius) {
     <button
       type="button"
       class="detail-button"
-      @click.stop="emit('show-detail', props.weather.name, props.weather.status)"
+      @click.stop="emit('show-detail', props.weather.id)"
     >
       Details
     </button>
