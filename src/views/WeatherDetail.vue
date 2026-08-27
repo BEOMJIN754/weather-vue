@@ -47,6 +47,11 @@ watch(() => props.cityId, loadWeatherDetail, { immediate: true })
       <p>날씨: {{ cityData.status }}</p>
       <p>습도: {{ cityData.humidity }}%</p>
       <p>풍속: {{ cityData.wind }}m/s</p>
+      <hr />
+      <h4>대기질 정보</h4>
+      <p>AQI: {{ cityData.airQuality }}</p>
+      <p>PM2.5: {{ cityData.pm25 }} μg/m³</p>
+      <p>PM10: {{ cityData.pm10 }} μg/m³</p>
     </div>
 
     <button @click="router.push({ name: 'WeatherHome' })">홈으로 돌아가기</button>
