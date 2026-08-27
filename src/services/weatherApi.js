@@ -5,13 +5,42 @@ const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY
 
 const weatherClient = axios.create({
   baseURL: 'https://api.openweathermap.org/data/2.5/weather',
-  timeout: 7000,
+  timeout: 15000,
 })
 
 const airPollutionClient = axios.create({
   baseURL: 'https://api.openweathermap.org/data/2.5/air_pollution',
-  timeout: 7000,
+  timeout: 15000,
 })
+
+const forecastClient = axios.create({
+  baseURL: 'https://api.open-meteo.com/v1/forecast',
+  timeout: 15000,
+})
+
+const weatherCodeLabels = {
+  0: '맑음',
+  1: '대체로 맑음',
+  2: '부분적으로 흐림',
+  3: '흐림',
+  45: '안개',
+  48: '서리 안개',
+  51: '약한 이슬비',
+  53: '이슬비',
+  55: '강한 이슬비',
+  61: '약한 비',
+  63: '비',
+  65: '강한 비',
+  71: '약한 눈',
+  73: '눈',
+  75: '강한 눈',
+  80: '약한 소나기',
+  81: '소나기',
+  82: '강한 소나기',
+  95: '뇌우',
+  96: '우박을 동반한 뇌우',
+  99: '강한 우박을 동반한 뇌우',
+}
 
 function assertApiKey() {
   if (!API_KEY) {
@@ -108,4 +137,30 @@ export async function fetchWeatherDetail(cityId) {
   ])
 
   return normalizeWeather(city, weatherData, airData)
+}
+
+export async function fetchTomorrowForecast(cityId) {
+  const city = findCityById(cityId)
+  if (!city) return null
+
+  const { data } = await forecastClient.get('', {
+    params: {
+      latitude: city.lat,
+      longitude: city.lon,
+      daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max',
+      forecast_days: 2,
+      timezone: 'auto',
+    },
+  })
+
+  const tomorrowIndex = 1
+  const weatherCode = data.daily?.weather_code?.[tomorrowIndex]
+
+  return {
+    date: data.daily?.time?.[tomorrowIndex],
+    status: weatherCodeLabels[weatherCode] ?? '정보 없음',
+    maxTemp: data.daily?.temperature_2m_max?.[tomorrowIndex],
+    minTemp: data.daily?.temperature_2m_min?.[tomorrowIndex],
+    precipitationProbability: data.daily?.precipitation_probability_max?.[tomorrowIndex],
+  }
 }

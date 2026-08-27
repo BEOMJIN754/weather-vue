@@ -2,15 +2,18 @@
 import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTemperature } from '@/composables/useTemperature'
-import { fetchWeatherDetail } from '@/services/weatherApi'
+import { fetchTomorrowForecast, fetchWeatherDetail } from '@/services/weatherApi'
 import BaseDashBoardCard from '@/components/BaseDashBoardCard.vue'
 
 const router = useRouter()
 const cityData = ref(null)
+const tomorrowData = ref(null)
 const isLoading = ref(false)
 const errorMessage = ref('')
 
 const { displayTemp, unitSymbol } = useTemperature(() => cityData.value?.temp ?? 0)
+const { displayTemp: tomorrowMaxTemp } = useTemperature(() => tomorrowData.value?.maxTemp ?? 0)
+const { displayTemp: tomorrowMinTemp } = useTemperature(() => tomorrowData.value?.minTemp ?? 0)
 
 const props = defineProps({
   cityId: {
@@ -24,7 +27,13 @@ async function loadWeatherDetail() {
   errorMessage.value = ''
 
   try {
-    cityData.value = await fetchWeatherDetail(props.cityId)
+    const [weather, tomorrow] = await Promise.all([
+      fetchWeatherDetail(props.cityId),
+      fetchTomorrowForecast(props.cityId),
+    ])
+
+    cityData.value = weather
+    tomorrowData.value = tomorrow
     if (!cityData.value) errorMessage.value = '등록되지 않은 도시입니다.'
   } catch (error) {
     console.error(error)
@@ -72,9 +81,35 @@ watch(() => props.cityId, loadWeatherDetail, { immediate: true })
         <div class="air-quality-block">
           <h4>대기질 정보</h4>
           <div class="detail-grid">
-            <div class="detail-item"><span>AQI</span><strong>{{ cityData.airQuality }}</strong></div>
-            <div class="detail-item"><span>PM2.5</span><strong>{{ cityData.pm25 }} μg/m³</strong></div>
-            <div class="detail-item"><span>PM10</span><strong>{{ cityData.pm10 }} μg/m³</strong></div>
+            <div class="detail-item">
+              <span>AQI</span><strong>{{ cityData.airQuality }}</strong>
+            </div>
+            <div class="detail-item">
+              <span>PM2.5</span><strong>{{ cityData.pm25 }} μg/m³</strong>
+            </div>
+            <div class="detail-item">
+              <span>PM10</span><strong>{{ cityData.pm10 }} μg/m³</strong>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="tomorrowData" class="air-quality-block">
+          <h4>
+            내일 날씨 <small>({{ tomorrowData.date }})</small>
+          </h4>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <span>날씨</span>
+              <strong>{{ tomorrowData.status }}</strong>
+            </div>
+            <div class="detail-item">
+              <span>최고 / 최저 기온</span>
+              <strong>{{ tomorrowMaxTemp }} / {{ tomorrowMinTemp }}{{ unitSymbol }}</strong>
+            </div>
+            <div class="detail-item">
+              <span>강수 확률</span>
+              <strong>{{ tomorrowData.precipitationProbability }}%</strong>
+            </div>
           </div>
         </div>
       </div>
