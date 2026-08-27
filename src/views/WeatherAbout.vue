@@ -17,7 +17,6 @@ const appTitle = inject('appTitle', 'Weather Dashboard')
     <p>- 도시 검색</p>
     <p>- 섭씨/화씨 변환</p>
     <p>- 상세 날씨 정보 제공 날씨</p>
-    - 버셀 환경변수 확인용 커밋
     <p>정보를 API 를 활용하여 위트있게 가져옵니다.</p>
   </section>
 </template>
