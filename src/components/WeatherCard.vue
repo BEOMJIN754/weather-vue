@@ -1,13 +1,11 @@
 <script setup>
+import { toRef } from 'vue'
+import { useTemperature } from '@/composables/useTemperature'
+
 const props = defineProps({
   weather: {
     type: Object,
     required: true,
-  },
-  temperatureUnit: {
-    type: String,
-    default: 'C',
-    validator: (value) => ['C', 'F'].includes(value),
   },
   isFavorite: {
     type: Boolean,
@@ -15,13 +13,8 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['select', 'toggle-favorite', 'change-temperature-unit', 'show-detail'])
-
-function displayTemperature(celsius) {
-  if (props.temperatureUnit === 'C') return celsius
-
-  return ((celsius * 9) / 5 + 32).toFixed(1)
-}
+const emit = defineEmits(['select', 'toggle-favorite', 'show-detail'])
+const { displayTemp, unitSymbol } = useTemperature(toRef(() => props.weather.temp))
 </script>
 
 <template>
@@ -32,10 +25,7 @@ function displayTemperature(celsius) {
 
     <h3>{{ props.weather.name }} ({{ props.weather.status }})</h3>
 
-    <button type="button" @click.stop="emit('change-temperature-unit')">
-      온도 단위 변경
-    </button>
-    <p>Temp.now: {{ displayTemperature(props.weather.temp) }}°{{ props.temperatureUnit }}</p>
+    <p>Temp.now: {{ displayTemp }}{{ unitSymbol }}</p>
     <p>Weather: {{ props.weather.status }}</p>
 
     <span v-if="props.weather.temp >= 25" class="temperature-status hot"> 🥵 더움 </span>

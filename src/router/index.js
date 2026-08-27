@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import WeatherHome from '@/views/WeatherHome.vue'
-import { findWeatherById } from '@/data/weather'
+import { findCityById } from '@/data/cities'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -37,7 +37,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   if (to.name === 'WeatherDetail') {
     const cityId = String(to.params.cityId)
-    if (!findWeatherById(cityId)) {
+    if (!findCityById(cityId)) {
       return { name: 'NotFound' }
     }
   }
