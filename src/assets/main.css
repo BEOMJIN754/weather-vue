@@ -134,7 +134,7 @@ body {
 .search-box input {
   width: min(100%, 360px);
   padding: 10px 12px;
-  border: 1px solid #7dd3fc;
+  border: none;
   border-radius: 8px;
   text-align: center;
 }
