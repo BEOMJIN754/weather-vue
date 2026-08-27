@@ -19,9 +19,9 @@ const { displayTemp, unitSymbol } = useTemperature(toRef(() => props.weather.tem
 
 <template>
   <article class="weather-card" @click="emit('select', props.weather.name)">
-    <button type="button" @click.stop="emit('toggle-favorite', props.weather.name)">
+    <el-button type="warning" plain @click.stop="emit('toggle-favorite', props.weather.name)">
       {{ props.isFavorite ? '★ delete Favorite' : '☆ Favorite' }}
-    </button>
+    </el-button>
 
     <h3>{{ props.weather.name }} ({{ props.weather.status }})</h3>
 
@@ -36,8 +36,12 @@ const { displayTemp, unitSymbol } = useTemperature(toRef(() => props.weather.tem
     <span v-else-if="props.weather.temp <= 10" class="temperature-status cold"> 🥶 추움 </span>
     <span v-else class="temperature-status cool">🍃 시원함</span>
 
-    <button type="button" class="detail-button" @click.stop="emit('show-detail', props.weather.id)">
-      details
-    </button>
+    <el-button
+      type="primary"
+      class="detail-button"
+      @click.stop="emit('show-detail', props.weather.id)"
+    >
+      Details
+    </el-button>
   </article>
 </template>

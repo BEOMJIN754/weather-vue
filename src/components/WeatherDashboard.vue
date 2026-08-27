@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchWeatherList } from '@/services/weatherApi'
+import { fetchWeatherList } from '@/services/weatherApi.js'
 import BaseDashBoardCard from './BaseDashBoardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
@@ -90,7 +90,7 @@ onMounted(loadWeather)
 
       <div v-else-if="errorMessage">
         <p class="error-message">{{ errorMessage }}</p>
-        <button type="button" @click="loadWeather">다시 시도</button>
+        <el-button type="primary" @click="loadWeather"> 다시 시도 </el-button>
       </div>
 
       <template v-else>

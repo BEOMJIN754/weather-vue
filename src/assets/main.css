@@ -17,7 +17,6 @@ body {
 .dashboard-wrapper section {
   margin-bottom: 16px;
   padding: 20px;
-  border: 1px solid #7dd3fc;
   border-radius: 10px;
   background: #f0f9ff;
 }
@@ -87,14 +86,6 @@ body {
   background: #fef9c3;
   color: #854d0e;
   text-align: center;
-}
-button {
-  border: none;
-  background: #facc15;
-  color: #422006;
-  padding: 4px 10px;
-  border-radius: 8px;
-  cursor: pointer;
 }
 
 @media (max-width: 700px) {

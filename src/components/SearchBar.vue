@@ -7,17 +7,13 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update-query'])
-
-function updateQuery(event) {
-  emit('update-query', event.target.value)
-}
 </script>
 
 <template>
-  <input
-    type="text"
-    :value="props.currentQuery"
-    placeholder="enter the city"
-    @input="updateQuery"
+  <el-input
+    :model-value="props.currentQuery"
+    placeholder="검색할 도시 이름을 입력하세요"
+    clearable
+    @update:model-value="emit('update-query', $event)"
   />
 </template>

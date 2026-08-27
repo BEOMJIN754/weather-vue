@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTemperature } from '@/composables/useTemperature'
 import { fetchWeatherDetail } from '@/services/weatherApi'
+import BaseDashBoardCard from '@/components/BaseDashBoardCard.vue'
 
 const router = useRouter()
 const cityData = ref(null)
@@ -37,23 +38,50 @@ watch(() => props.cityId, loadWeatherDetail, { immediate: true })
 </script>
 
 <template>
-  <section>
-    <h2>상세 날씨</h2>
-    <p v-if="isLoading">is loading . . .</p>
-    <p v-else-if="errorMessage">{{ errorMessage }}</p>
-    <div v-else-if="cityData">
-      <h3>{{ cityData.name }}</h3>
-      <p>기온: {{ displayTemp }}{{ unitSymbol }}</p>
-      <p>날씨: {{ cityData.status }}</p>
-      <p>습도: {{ cityData.humidity }}%</p>
-      <p>풍속: {{ cityData.wind }}m/s</p>
-      <hr />
-      <h4>대기질 정보</h4>
-      <p>AQI: {{ cityData.airQuality }}</p>
-      <p>PM2.5: {{ cityData.pm25 }} μg/m³</p>
-      <p>PM10: {{ cityData.pm10 }} μg/m³</p>
-    </div>
+  <section class="detail-page">
+    <BaseDashBoardCard class="detail-card">
+      <template #title>
+        <h2>상세 날씨</h2>
+      </template>
 
-    <button @click="router.push({ name: 'WeatherHome' })">홈으로 돌아가기</button>
+      <p v-if="isLoading" class="detail-message">날씨 정보를 불러오는 중입니다...</p>
+      <p v-else-if="errorMessage" class="detail-message error-message">{{ errorMessage }}</p>
+
+      <div v-else-if="cityData" class="detail-content">
+        <h3>{{ cityData.name }}</h3>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span>기온</span>
+            <strong>{{ displayTemp }}{{ unitSymbol }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>날씨</span>
+            <strong>{{ cityData.status }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>습도</span>
+            <strong>{{ cityData.humidity }}%</strong>
+          </div>
+          <div class="detail-item">
+            <span>풍속</span>
+            <strong>{{ cityData.wind }}m/s</strong>
+          </div>
+        </div>
+
+        <div class="air-quality-block">
+          <h4>대기질 정보</h4>
+          <div class="detail-grid">
+            <div class="detail-item"><span>AQI</span><strong>{{ cityData.airQuality }}</strong></div>
+            <div class="detail-item"><span>PM2.5</span><strong>{{ cityData.pm25 }} μg/m³</strong></div>
+            <div class="detail-item"><span>PM10</span><strong>{{ cityData.pm10 }} μg/m³</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <el-button type="primary" @click="router.push({ name: 'WeatherHome' })">
+        홈으로 돌아가기
+      </el-button>
+    </BaseDashBoardCard>
   </section>
 </template>
